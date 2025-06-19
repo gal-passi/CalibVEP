@@ -116,5 +116,5 @@ class Predictor:
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
-    predictor = Predict(sequence = args.seq, variant = args.mut)
+    predictor = Predict(sequence = args.seq, variant = args.mut, offset = args.offset)
     score_llr, calibrate_score = predictor.score()
