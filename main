@@ -2,6 +2,7 @@ import numpy as np
 import argparse
 from utils import process_raw_variant
 from utils esm_setup, esm_process_long_sequences, esm_seq_logits, score_mutation_esm_inference
+from utils import has_homologs, is_disordered
 
 
 def create_parser():
