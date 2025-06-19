@@ -102,7 +102,7 @@ def esm_seq_logits(model, tokens, log=True, softmax=True, return_device='cpu', e
                                 esm_version=1)
         return float(logits[mut_idx][AA_ESM_LOC[alt_aa]] - logits[mut_idx][AA_ESM_LOC[wt_aa]]), log
 
-def is_dicordered(seq: str, idx: int):
+def is_disordered(seq: str, idx: int):
         raise NotImplementedError()
 
 def has_homologs(seq: str):
