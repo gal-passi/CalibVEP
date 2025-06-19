@@ -1,5 +1,5 @@
 import numpy as np
-from utils import 
+from utils import process_raw_variant
 
 class Predictor:
     """
@@ -10,11 +10,13 @@ class Predictor:
     sequence : str
         The amino acid sequence of the protein.
     variant : str
-        The variant in HGVS or similar notation (e.g., "p.Gly12Asp").
+        The variant in HGVS or similar notation (e.g., "p.G12A").
+    offset: int
+        variant location is shift by offset, default is 1 (count starts from 0) 
 
     """
     
-    def __init__(self, sequence: str, variant: str):
+    def __init__(self, sequence: str, variant: str, offset=1):
         """
         Initialize the Predictor object and validate the input.
 
@@ -32,8 +34,9 @@ class Predictor:
         """
         self.sequence = sequence
         self.variant = variant
-        
-        # TODO: Implement validation for sequence and variant
+        self.wt, self.alt, self.index = process_raw_variant(variant)
+        self.index = self.index - offset
+        assert sesequence[self.index] == self.wt, "variant does not match provided sequence, check offset"
     
     def traverse(self) -> tuple[bool, bool, bool]:
         """
@@ -44,11 +47,11 @@ class Predictor:
         tuple of bool
             (is_long, has_homologs, is_disordered)
         """
-        raise NotImplementedError("Method traverse() is not yet implemented.")
+        raise NotImplementedError)
     
     def _calibration_histogram(self, is_long: bool, has_homologs: bool, is_disordered: bool) -> np.ndarray:
         """
-        Generate a calibration histogram based on mutation subgroup characteristics.
+        Returns a calibration histogram based on mutation subgroup characteristics.
 
         Parameters
         ----------
@@ -64,7 +67,7 @@ class Predictor:
         np.ndarray
             A 1D array representing the calibration histogram with shape (n_buckets,).
         """
-        raise NotImplementedError("Method _calibration_histogram() is not yet implemented.")
+        raise NotImplementedError()
     
     def score(self) -> tuple[float, float]:
         """
@@ -75,7 +78,7 @@ class Predictor:
         tuple of float
             (raw_score, calibrated_score)
         """
-        raise NotImplementedError("Method score() is not yet implemented.")
+        raise NotImplementedError()
 
 
 if __name__ == "__main__":
