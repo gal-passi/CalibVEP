@@ -23,3 +23,52 @@ def esm_setup(model_name=ESM1B_MODEL):
     model = model.to(DEVICE)
     print(f"model loaded on {DEVICE}")
     return model, alphabet
+
+def esm_process_long_sequences(seq, loc):
+    """
+    trims seq to len < 1024 using mut Object. to fit for bert model
+    :return: offset from orig location, trimmed sequence
+    """
+    thr = ESM_MAX_LENGTH // 2
+    left_bound = 0 if loc-thr < 0 else loc - thr
+    right_bound = len(seq) if loc + thr >len(seq) else loc+thr
+    left_excess = 0 if loc - thr > 0 else abs(loc-thr)
+    right_excess = 0 if loc + thr <= len(seq) else loc+thr-len(seq)
+    if (left_excess == 0) and (right_excess == 0):
+        return left_bound, seq[left_bound:right_bound]
+    if left_excess > 0:
+        return 0, seq[left_bound:right_bound+left_excess]
+    if right_excess > 0:
+        return left_bound-right_excess, seq[left_bound-right_excess:right_bound]
+
+
+def esm_seq_logits(model, tokens, log=True, softmax=True, return_device='cpu', esm_version=1):
+    """
+    :param model: ESM3 initiated model
+    :param tokens: tokenized sequence
+    :param log: bool return log of logits
+    :param softmax: bool return softmax of logits
+    :param return_device: 'cpu' | 'cuda should logits be returned on cpu or cuda
+    :return: numpy array - log_s
+    """
+
+    if return_device == 'cuda':
+        assert return_device == DEVICE, 'return type cuda but no GPU detected'
+    model.eval()
+    with torch.no_grad():
+        if esm_version == 3:
+            assert tokens.device == model.device, 'tokens and model must be on the same device'
+            output = model.forward(sequence_tokens=tokens)
+            sequence_logits = output.sequence_logits
+        else:  #  esm 1,2
+            assert tokens.device == next(model.parameters()).device, 'tokens and model must be on the same device'
+            sequence_logits = model(tokens, repr_layers=REP_LAYERS, return_contacts=False)['logits']
+        aa_logits = sequence_logits[0, 1:-1, 4:24]
+        if log and softmax:
+            token_probs = torch.log_softmax(aa_logits, dim=-1)
+        elif log:
+            token_probs = torch.log(aa_logits)
+        elif softmax:
+            token_probs = torch.softmax(aa_logits, dim=-1)
+        token_probs = token_probs.cpu().numpy()
+        return token_probs
