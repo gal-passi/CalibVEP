@@ -44,7 +44,7 @@ def esm_process_long_sequences(seq, loc):
 
 def esm_seq_logits(model, tokens, log=True, softmax=True, return_device='cpu', esm_version=1):
     """
-    :param model: ESM3 initiated model
+    :param model: initiated ESM model
     :param tokens: tokenized sequence
     :param log: bool return log of logits
     :param softmax: bool return softmax of logits
