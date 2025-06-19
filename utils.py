@@ -1,4 +1,5 @@
 from definitions import *
+import torch
 import re
 
 def process_raw_variant(description: str): 
