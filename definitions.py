@@ -6,7 +6,8 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 #  DIRECTORIES 
 
 HOMOLOGS_PATH = pjoin('data', 'homologs_dict.pickle')
-CALIBRATION_HISTOGRAMS = pjoin('data', 
+CALIBRATION_HISTOGRAMS = pjoin('data', 'alibration_histograms')
+
 #  VARIANT PROCESSING 
 
 VALID_AA = "ACDEFGHIKLMNPQRSTVWY"
@@ -23,3 +24,6 @@ MUTATION_REGEX =  rf'p\.(?P<symbol>(?P<orig>[{VALID_AA}]){{1}}(?P<location>[\d]+
 #  VARIANT PREDICTION & ESM 
 
 ESM1B_MODEL = 'esm1b_t33_650M_UR50S'
+ESM_MAX_LENGTH = 1020
+
+# TODO load homologs dict here 
