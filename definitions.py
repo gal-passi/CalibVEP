@@ -1,7 +1,12 @@
 import torch
+from os.path inmport join as pjoin
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+#  DIRECTORIES 
+
+HOMOLOGS_PATH = pjoin('data', 'homologs_dict.pickle')
+CALIBRATION_HISTOGRAMS = pjoin('data', 
 #  VARIANT PROCESSING 
 
 VALID_AA = "ACDEFGHIKLMNPQRSTVWY"
