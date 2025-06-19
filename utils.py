@@ -101,3 +101,6 @@ def esm_seq_logits(model, tokens, log=True, softmax=True, return_device='cpu', e
         logits = esm_seq_logits(model=model, tokens=batch_tokens, log=True, softmax=True, return_device='cpu',
                                 esm_version=1)
         return float(logits[mut_idx][AA_ESM_LOC[alt_aa]] - logits[mut_idx][AA_ESM_LOC[wt_aa]]), log
+
+def is_dicordered(seq: str, idx: int):
+        raise NotImplementedError
