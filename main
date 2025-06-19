@@ -1,6 +1,36 @@
 import numpy as np
+import argparse
 from utils import process_raw_variant
 from utils esm_setup, esm_process_long_sequences, esm_seq_logits, score_mutation_esm_inference
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(
+        description="Pipeline interface for protein-level analysis of missense variants in familial data"
+    )
+
+    parser.add_argument(
+            "-seq", "--sequence",
+            type=str,
+            required=True
+            help="protein sequence",
+        )
+
+    parser.add_argument(
+                "-mut", "--variant",
+                type=str,
+                required=True
+                help="mutation must be in format [wt_aa][index][alt_aa] i.e A167M | p.A167M",
+            )
+
+    parser.add_argument(
+            "--offset",
+            type=int,
+            default=1,
+            help="offset for mutation index default is 1: count start from zero i.e 1-->0 if offset=1",
+    )
+    return parser
+
 
 class Predictor:
     """
