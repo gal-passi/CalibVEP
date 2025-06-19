@@ -26,6 +26,7 @@ MUTATION_REGEX =  rf'p\.(?P<symbol>(?P<orig>[{VALID_AA}]){{1}}(?P<location>[\d]+
 ESM1B_MODEL = 'esm1b_t33_650M_UR50S'          
 ESM_MAX_LENGTH = 1020
 MASK_TOKEN = '<mask>'
+REP_LAYERS = [33]
 
 HOMOLOGS_THRESHIOLD = 300  # TODO check
 # TODO load homologs dict here 
