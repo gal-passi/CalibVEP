@@ -79,7 +79,7 @@ class Predictor:
         tuple of bool
             (is_long, has_homologs, is_disordered)
         """
-        raise NotImplementedError)
+        raise NotImplementedError()
     
     def _calibration_histogram(self, is_long: bool, has_homologs: bool, is_disordered: bool) -> np.ndarray:
         """
