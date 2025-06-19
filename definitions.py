@@ -29,3 +29,5 @@ MASK_TOKEN = '<mask>'
 
 HOMOLOGS_THRESHIOLD = 300  # TODO check
 # TODO load homologs dict here 
+
+DISORDERED_THRESHOLD = 0.7  # TODO check 
