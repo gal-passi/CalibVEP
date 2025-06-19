@@ -1,3 +1,83 @@
+import numpy as np
+from utils import 
+
+class Predictor:
+    """
+    Predictor class for entropy-based variant effect prediction (VEP) with calibration.
+
+    Parameters
+    ----------
+    sequence : str
+        The amino acid sequence of the protein.
+    variant : str
+        The variant in HGVS or similar notation (e.g., "p.Gly12Asp").
+
+    """
+    
+    def __init__(self, sequence: str, variant: str):
+        """
+        Initialize the Predictor object and validate the input.
+
+        Parameters
+        ----------
+        sequence : str
+            Protein sequence.
+        variant : str
+            Variant description.
+
+        Raises
+        ------
+        ValueError
+            If the input validation fails.
+        """
+        self.sequence = sequence
+        self.variant = variant
+        
+        # TODO: Implement validation for sequence and variant
+    
+    def traverse(self) -> tuple[bool, bool, bool]:
+        """
+        Traverse the input data to infer mutation subgroup properties.
+
+        Returns
+        -------
+        tuple of bool
+            (is_long, has_homologs, is_disordered)
+        """
+        raise NotImplementedError("Method traverse() is not yet implemented.")
+    
+    def _calibration_histogram(self, is_long: bool, has_homologs: bool, is_disordered: bool) -> np.ndarray:
+        """
+        Generate a calibration histogram based on mutation subgroup characteristics.
+
+        Parameters
+        ----------
+        is_long : bool
+            Whether the sequence is considered long.
+        has_homologs : bool
+            Whether homologous sequences are available.
+        is_disordered : bool
+            Whether the mutated region is predicted to be disordered.
+
+        Returns
+        -------
+        np.ndarray
+            A 1D array representing the calibration histogram with shape (n_buckets,).
+        """
+        raise NotImplementedError("Method _calibration_histogram() is not yet implemented.")
+    
+    def score(self) -> tuple[float, float]:
+        """
+        Compute raw and calibrated pathogenicity scores.
+
+        Returns
+        -------
+        tuple of float
+            (raw_score, calibrated_score)
+        """
+        raise NotImplementedError("Method score() is not yet implemented.")
+
+
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
