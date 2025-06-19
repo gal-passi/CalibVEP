@@ -5,6 +5,7 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 #  VARIANT PROCESSING 
 
 VALID_AA = "ACDEFGHIKLMNPQRSTVWY"
+STOP_AA = '_'
 N_AA = len(VALID_AA)
 AA_SYN = {"A": "ALA", "C": "CYS", "D": "ASP", "E": "GLU", "F": "PHE", "G": "GLY", "H": "HIS", "I": "ILE",
           "K": "LYS", "L": "LEU", "M": "MET", "N": "ASN", "P": "PRO", "Q": "GLN", "R": "ARG", "S": "SER",
