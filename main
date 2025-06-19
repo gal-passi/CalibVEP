@@ -1,5 +1,6 @@
 import numpy as np
 from utils import process_raw_variant
+from utils esm_setup, esm_process_long_sequences, esm_seq_logits
 
 class Predictor:
     """
