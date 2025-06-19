@@ -72,3 +72,32 @@ def esm_seq_logits(model, tokens, log=True, softmax=True, return_device='cpu', e
             token_probs = torch.softmax(aa_logits, dim=-1)
         token_probs = token_probs.cpu().numpy()
         return token_probs
+
+    def score_mutation_esm_inference(model, alphabet, sequence: str, wt_aa: str, alt_aa: str, mut_idx: int, method='masked_marginals'):
+        """
+        :param model: esm initiated model
+        :param alphabet: alphabet api
+        :param sequence: protein sequence
+        :param mut_idx: int index of mutation in sequence
+        :param wt_aa: str wild-type amino-acid
+        :param alt_aa: str altered amino-acid 
+        :param method: scoring method str: wt_marginals | mutant_marginals | masked_marginals
+        :return: tuple (float | None ESM3 masked marginal, str log)
+        """
+        if len(sequence) > ESM_MAX_LENGTH:
+            new_offset, sequence = esm_process_long_sequences(sequence, mut_idx)
+            mut_idx = mut_idx - new_offset
+        assert sequence[mut_idx] == wt_aa, 'sequence does not match wild-type AA - check offset'
+        if method == 'mutant_marginals':
+            input_seq = sequence[:mut_idx] + alt_aa + sequence[mut_idx + 1:]
+        elif method == 'masked_marginals':
+            input_seq = sequence[:mut_idx] + MASK_TOKEN + sequence[mut_idx + 1:]
+        else:
+            input_seq = sequence
+        tokenizer = alphabet.get_batch_converter()
+        # tokens = torch.tensor(tokenized, dtype=torch.int64).unsqueeze(0).to(DEVICE)
+        _, _, batch_tokens = tokenizer([(f"p.{wt_aa}{mut_idx}{alt_aa}, input_seq)])
+        batch_tokens = batch_tokens.to(DEVICE)
+        logits = esm_seq_logits(model=model, tokens=batch_tokens, log=True, softmax=True, return_device='cpu',
+                                esm_version=1)
+        return float(logits[mut_idx][AA_ESM_LOC[alt_aa]] - logits[mut_idx][AA_ESM_LOC[wt_aa]]), log
