@@ -14,3 +14,7 @@ AA_SYN_REV = dict((v, k) for k, v in AA_SYN.items())
 AA_TO_INDEX_ESM = {'K': 0, 'R': 1, 'H': 2, 'E': 3, 'D': 4, 'N': 5, 'Q': 6, 'T': 7, 'S': 8, 'C': 9, 'G': 10,
                    'A': 11, 'V': 12, 'L': 13, 'I': 14, 'M': 15, 'P': 16, 'Y': 17, 'F': 18, 'W': 19}
 MUTATION_REGEX =  rf'p\.(?P<symbol>(?P<orig>[{VALID_AA}]){{1}}(?P<location>[\d]+)(?P<change>[{VALID_AA}]){{1}})'
+
+#  VARIANT PREDICTION & ESM 
+
+ESM1B_MODEL = 'esm1b_t33_650M_UR50S'
