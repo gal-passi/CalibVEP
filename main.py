@@ -1,0 +1,120 @@
+import numpy as np
+import argparse
+from utils import process_raw_variant
+# from utils esm_setup, esm_process_long_sequences, esm_seq_logits, score_mutation_esm_inference
+from utils import has_homologs, is_disordered
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(
+        description="Pipeline interface for protein-level analysis of missense variants in familial data"
+    )
+
+    parser.add_argument(
+            "-seq", "--sequence",
+            type=str,
+            required=True,
+            help="protein sequence",
+        )
+
+    parser.add_argument(
+                "-mut", "--variant",
+                type=str,
+                required=True,
+                help="mutation must be in format [wt_aa][index][alt_aa] i.e A167M | p.A167M",
+            )
+
+    parser.add_argument(
+            "--offset",
+            type=int,
+            default=1,
+            help="offset for mutation index default is 1: count start from zero i.e 1-->0 if offset=1",
+    )
+    return parser
+
+
+class Predictor:
+    """
+    Predictor class for entropy-based variant effect prediction (VEP) with calibration.
+
+    Parameters
+    ----------
+    sequence : str
+        The amino acid sequence of the protein.
+    variant : str
+        The variant in HGVS or similar notation (e.g., "p.G12A").
+    offset: int
+        variant location is shift by offset, default is 1 (count starts from 0) 
+
+    """
+    
+    def __init__(self, sequence: str, variant: str, offset=1):
+        """
+        Initialize the Predictor object and validate the input.
+
+        Parameters
+        ----------
+        sequence : str
+            Protein sequence.
+        variant : str
+            Variant description.
+
+        Raises
+        ------
+        ValueError
+            If the input validation fails.
+        """
+        self.sequence = sequence
+        self.variant = variant
+        self.wt, self.alt, self.index = process_raw_variant(variant)
+        self.index = self.index - offset
+        assert sequence[self.index] == self.wt, "variant does not match provided sequence, check offset"
+    
+    def traverse(self) -> tuple[bool, bool, bool]:
+        """
+        Traverse the input data to infer mutation subgroup properties.
+
+        Returns
+        -------
+        tuple of bool
+            (is_long, has_homologs, is_disordered)
+        """
+        raise NotImplementedError()
+    
+    def _calibration_histogram(self, is_long: bool, has_homologs: bool, is_disordered: bool) -> np.ndarray:
+        """
+        Returns a calibration histogram based on mutation subgroup characteristics.
+
+        Parameters
+        ----------
+        is_long : bool
+            Whether the sequence is considered long.
+        has_homologs : bool
+            Whether homologous sequences are available.
+        is_disordered : bool
+            Whether the mutated region is predicted to be disordered.
+
+        Returns
+        -------
+        np.ndarray
+            A 1D array representing the calibration histogram with shape (n_buckets,).
+        """
+        raise NotImplementedError()
+    
+    def score(self) -> tuple[float, float]:
+        """
+        Compute raw and calibrated pathogenicity scores.
+
+        Returns
+        -------
+        tuple of float
+            (raw_score, calibrated_score)
+        """
+        raise NotImplementedError()
+
+
+if __name__ == "__main__":
+    parser = create_parser()
+    args = parser.parse_args()
+    predictor = Predict(sequence = args.seq, variant = args.mut, offset = args.offset)
+    score_llr, calibrate_score = predictor.score()

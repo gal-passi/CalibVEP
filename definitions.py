@@ -1,5 +1,5 @@
 import torch
-from os.path inmport join as pjoin
+from os.path import join as pjoin
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -21,6 +21,9 @@ AA_TO_INDEX_ESM = {'K': 0, 'R': 1, 'H': 2, 'E': 3, 'D': 4, 'N': 5, 'Q': 6, 'T': 
                    'A': 11, 'V': 12, 'L': 13, 'I': 14, 'M': 15, 'P': 16, 'Y': 17, 'F': 18, 'W': 19}
 MUTATION_REGEX =  rf'p\.(?P<symbol>(?P<orig>[{VALID_AA}]){{1}}(?P<location>[\d]+)(?P<change>[{VALID_AA}]){{1}})'
 
+ESM_AA_ORDER = 'LAGVSERTIDPKQNFYMHWC'
+ESM_AA_LOC = {aa: idx for idx, aa in enumerate(ESM_AA_ORDER)}
+
 #  VARIANT PREDICTION & ESM 
 
 ESM1B_MODEL = 'esm1b_t33_650M_UR50S'          
@@ -28,7 +31,8 @@ ESM_MAX_LENGTH = 1020
 MASK_TOKEN = '<mask>'
 REP_LAYERS = [33]
 
-HOMOLOGS_THRESHIOLD = 300  # TODO check
+HOMOLOGS_THRESHIOLD = 450
 # TODO load homologs dict here 
 
-DISORDERED_THRESHOLD = 0.7  # TODO check 
+DISORDERED_THRESHOLD = 0.7
+OVERLAP_SIZE_LONG_PROTEIN = 250
