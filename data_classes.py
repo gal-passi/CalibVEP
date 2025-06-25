@@ -8,7 +8,6 @@ class AAMut:
     wt_aa: str
     mut_idx: int
     change_aa: str
-    orig_mutation_desc: str
 
 
 @dataclass

@@ -26,13 +26,51 @@ ESM_AA_LOC = {aa: idx for idx, aa in enumerate(ESM_AA_ORDER)}
 
 #  VARIANT PREDICTION & ESM 
 
-ESM1B_MODEL = 'esm1b_t33_650M_UR50S'          
+# ESM1B_MODEL = 'esm1b_t33_650M_UR50S'
+# REP_LAYERS = [33]
+ESM1B_MODEL = 'esm1_t6_43M_UR50S'
+REP_LAYERS = [6]
 ESM_MAX_LENGTH = 1020
 MASK_TOKEN = '<mask>'
-REP_LAYERS = [33]
 
 HOMOLOGS_THRESHIOLD = 450
 # TODO load homologs dict here 
 
 DISORDERED_THRESHOLD = 0.7
 OVERLAP_SIZE_LONG_PROTEIN = 250
+PATH_TO_BIN_DICT = "data/bins_dict.pkl"
+
+SCORE_MAPPING = {
+    'all/homologs_0_to_450/disordered/longer_than_1022': {
+        'method': 'wt_marginals_base_wt_score_126',
+        'score_attr': lambda mvs: mvs.wt.nadav_base_wt_score.item()
+    },
+    'all/homologs_0_to_450/disordered/shorter_than_1022': {
+        'method': 'masked_marginals_entropy_weighted_llr_score_142',
+        'score_attr': lambda mvs: mvs.masked.entropy_weighted_llr_score.item()
+    },
+    'all/homologs_0_to_450/ordered/longer_than_1022': {
+        'method': 'wt_marginals_base_wt_score_200',
+        'score_attr': lambda mvs: mvs.wt.nadav_base_wt_score.item()
+    },
+    'all/homologs_0_to_450/ordered/shorter_than_1022': {
+        'method': 'mutant_marginals_entropy_weighted_llr_score_200',
+        'score_attr': lambda mvs: mvs.mutante.entropy_weighted_llr_score.item()
+    },
+    'all/homologs_450_plus/disordered/longer_than_1022': {
+        'method': 'wt_not_nadav_marginals_base_wt_score_203',
+        'score_attr': lambda mvs: mvs.wt.llr_base_score.item()
+    },
+    'all/homologs_450_plus/disordered/shorter_than_1022': {
+        'method': 'wt_not_nadav_marginals_base_wt_score_77',
+        'score_attr': lambda mvs: mvs.wt.llr_base_score.item()
+    },
+    'all/homologs_450_plus/ordered/longer_than_1022': {
+        'method': 'mutant_marginals_entropy_weighted_llr_score_200',
+        'score_attr': lambda mvs: mvs.mutante.entropy_weighted_llr_score.item()
+    },
+    'all/homologs_450_plus/ordered/shorter_than_1022': {
+        'method': 'masked_marginals_entropy_weighted_llr_score_200',
+        'score_attr': lambda mvs: mvs.masked.entropy_weighted_llr_score.item()
+    },
+}
