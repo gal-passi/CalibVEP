@@ -3,6 +3,7 @@ import definitions as d
 import torch
 import re
 import metapredict as meta
+import pickle
 
 from mutation_record import MutationRecord
 
@@ -371,4 +372,14 @@ def run_esm(model, alphabet, protein_seq: str, aa_mut: AAMut):
 
 
 def has_homologs(seq: str):
-    raise NotImplementedError()
+    # TODO Do it faster and better. The files are heavy (20GB for the file sequence_to_cluster)
+    base_save_path = '/cs/labs/dina/sapir_amittai/code/lab_winter_25/tmp_cluster/resources/proteins_with_less_then_1022_len_save/'
+    with open(f"{base_save_path}/sequence_to_cluster.pkl", 'rb') as file:
+        sequence_to_cluster = pickle.load(file)
+    with open(f"{base_save_path}/cluster_sizes.pkl", 'rb') as file:
+        cluster_sizes = pickle.load(file)
+    
+    cluster_id = sequence_to_cluster[seq]
+    cluster_size = cluster_sizes[cluster_id]
+    return cluster_size > d.HOMOLOGS_THRESHIOLD
+

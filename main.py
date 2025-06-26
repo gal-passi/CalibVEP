@@ -52,9 +52,9 @@ class Predictor:
             (is_long, has_homologs, is_disordered)
         """
         is_long = len(self.sequence) > ESM_MAX_LENGTH
-        has_homologs = False  # TODO implement
+        has_homologs_seq = has_homologs(self.sequence)
         is_disordered_seq = is_disordered(self.sequence, self.aa_mut.mut_idx)
-        return is_long, has_homologs, is_disordered_seq
+        return is_long, has_homologs_seq, is_disordered_seq
 
     def _get_tree_path_key(self) -> str:
         """
