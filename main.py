@@ -88,29 +88,9 @@ class Predictor:
             length_part = "shorter_than_1022"
         
         return f"all/{homolog_part}/{disorder_part}/{length_part}"
-        
-    
-    # def _calibration_histogram(self, is_long: bool, has_homologs: bool, is_disordered: bool) -> np.ndarray:
-    #     """
-    #     Returns a calibration histogram based on mutation subgroup characteristics.
 
-    #     Parameters
-    #     ----------
-    #     is_long : bool
-    #         Whether the sequence is considered long.
-    #     has_homologs : bool
-    #         Whether homologous sequences are available.
-    #     is_disordered : bool
-    #         Whether the mutated region is predicted to be disordered.
-
-    #     Returns
-    #     -------
-    #     np.ndarray
-    #         A 1D array representing the calibration histogram with shape (n_buckets,).
-    #     """
-    #     raise NotImplementedError()
     
-    def _compute_raw_score(self) -> tuple[str, float]:
+    def _compute_raw_score(self, model, alphabet) -> tuple[str, float]:
         """
         Compute the raw pathogenicity score using ESM model.
         
@@ -120,7 +100,7 @@ class Predictor:
             (bin_key, raw_score)
         """
         tree_path_key = self._get_tree_path_key()
-        model, alphabet = utils.esm_setup(ESM1B_MODEL, device=DEVICE)
+        
         
         mutation_variant_set: MutationVariantSet = utils.run_esm(model, alphabet, self.sequence, self.aa_mut)
         
@@ -166,7 +146,7 @@ class Predictor:
         return calibrated_score
 
 
-    def score(self) -> tuple[float, float]:
+    def score(self, model, alphabet) -> tuple[float, float]:
         """
         Compute raw and calibrated pathogenicity scores.
 
@@ -175,7 +155,7 @@ class Predictor:
         tuple of float
             (raw_score, calibrated_score)
         """
-        bin_key, raw_score = self._compute_raw_score()
+        bin_key, raw_score = self._compute_raw_score(model, alphabet)
         tree_path_key = self._get_tree_path_key()
         calibrated_score = self._calibrate_score(tree_path_key, bin_key, raw_score)
         
@@ -214,7 +194,8 @@ def create_parser():
 if __name__ == "__main__":
     parser = create_parser()
     args = parser.parse_args()
+    model, alphabet = utils.esm_setup(ESM1B_MODEL, device=DEVICE)
     predictor = Predictor(sequence = args.sequence, variant = args.variant, offset = args.offset)
-    score_llr, calibrate_score = predictor.score()
+    score_llr, calibrate_score = predictor.score(model, alphabet)
     print(f"Tree Path Key: {predictor._get_tree_path_key()}")
     print(f"Score LLR: {score_llr}, Pathogenic Percentage: {calibrate_score:.2f}%")
